@@ -46,12 +46,19 @@ func WorkFromFilename(filename string) (models.Work, error) {
 	return work, error
 }
 
-/*
-// WorkFromEpub -- read epub, look up online for metadata
-func WorkFromEpub(zipReader *zip.Reader) (models.Work, error) {
-	return workFromEpub(epub.New(zipReader))
+// WorkFromData -- read epub, look up online for metadata
+func WorkFromData(zipData []byte, size int64) (models.Work, error) {
+	ereader, error := epub.OpenBuffer(zipData, size)
+
+	if error != nil {
+		return models.Work{Error: error}, error
+	}
+
+	work, error := workFromEpub(ereader)
+
+	return work, error
 }
-*/
+
 func workFromEpub(epub *epub.EpubReaderCloser) (models.Work, error) {
 	isbn, err := epub.GetISBN()
 	if err != nil {
