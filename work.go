@@ -88,6 +88,12 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 	}
 
 	if this.Cover == "" || strings.Contains(this.Cover, "nophoto") {
+		if online, ok := this.Online["google"]; ok {
+			this.Cover = online.Cover
+		}
+	}
+
+	if this.Cover == "" || strings.Contains(this.Cover, "nophoto") {
 		this.Cover = fmt.Sprintf(net.Koanf.String("librarything.url.cover"),
 			net.Koanf.String("librarything.key"), this.ISBN)
 	}
