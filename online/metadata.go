@@ -2,36 +2,30 @@ package online
 
 import (
 	"github.com/jeanmarcboite/books/models"
-	"github.com/jeanmarcboite/books/online/goodreads"
-	"github.com/jeanmarcboite/books/online/google"
-	"github.com/jeanmarcboite/books/online/openlibrary"
+	"github.com/jeanmarcboite/books/online/providers/goodreads"
+	"github.com/jeanmarcboite/books/online/providers/google"
+	"github.com/jeanmarcboite/books/online/providers/openlibrary"
 )
 
 // LookUpISBN -- lookup a work on goodreads and openlibrary, with isbn
 func LookUpISBN(isbn string) (map[string]models.Metadata, error) {
 	metadata := make(map[string]models.Metadata)
 
-	/** LibraryThing returns "APIs Temporarily disabled."
-	l, err := librarything.LookUpISBN(isbn)
+	// LibraryThing returns "APIs Temporarily disabled."
+	/** online providers */
+	type ProviderLookUpISBN func(isbn string) (models.Metadata, error)
 
-	if err != nil {
-		return metadata, err
-	}
-	metadata["librarything"] = l
-	*/
-	o, err := openlibrary.LookUpISBN(isbn)
-	if err == nil {
-		metadata["openlibrary"] = o
+	providers := map[string]ProviderLookUpISBN{
+		goodreads.Name():   goodreads.LookUpISBN,
+		google.Name():      google.LookUpISBN,
+		openlibrary.Name(): openlibrary.LookUpISBN,
 	}
 
-	g, err := goodreads.LookUpISBN(isbn)
-	if err == nil {
-		metadata["goodreads"] = g
-	}
-
-	goog, err := google.LookUpISBN(isbn)
-	if err == nil {
-		metadata["google"] = goog
+	for provider, lookup := range providers {
+		m, err := lookup(isbn)
+		if err == nil {
+			metadata[provider] = m
+		}
 	}
 
 	return metadata, nil
