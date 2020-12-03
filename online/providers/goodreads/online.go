@@ -81,21 +81,23 @@ func parseBook(goodreads Book) (models.Metadata, error) {
 }
 
 func SearchAuthor(author string) (models.Author, error) {
-	_, err := getResponse(author, net.Koanf.String("goodreads.url.searchAuthor"))
+	response, err := getResponse(author, net.Koanf.String("goodreads.url.searchAuthor"))
 
 	if err != nil {
+		log.Error().Str("author", author).Msg("Cannot show author")
 		return models.Author{}, err
 	}
 
-	return models.Author{}, err
-}
-
-func ShowAuthor(author string) (models.Author, error) {
-	_, err := getResponse(author, net.Koanf.String("goodreads.url.showAuthor"))
-
-	if err != nil {
+	var goodreads GoodreadsResponseShowAuthor
+	xml.Unmarshal(response, &goodreads)
+	if goodreads.XMLName.Local != "GoodreadsResponse" {
+		log.Error().Str("author", author).Str("XMLName.Local", goodreads.XMLName.Local).Msg("Invalid goodreads response")
 		return models.Author{}, err
 	}
 
-	return models.Author{}, err
+	return models.Author{
+		ID:   goodreads.Author.ID,
+		Name: goodreads.Author.Name,
+		Link: goodreads.Author.Link,
+	}, nil
 }

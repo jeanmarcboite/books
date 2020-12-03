@@ -5,4 +5,5 @@ type Author struct {
 	Name string
 	Key  string
 	ID   string
+	Link string
 }

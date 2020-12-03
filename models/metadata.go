@@ -10,6 +10,7 @@ type Metadata struct {
 	Title          string
 	SubTitle       string
 	Author         string
+	FirstAuthor    Author
 	Authors        []Author
 	Categories     []string
 	Series         string

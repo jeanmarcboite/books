@@ -80,7 +80,7 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 	}
 
 	for online := range metadata {
-		// printFieldNames(metadata[online])
+		//printFieldNames(metadata[online])
 		mo := metadata[online]
 		s := reflect.ValueOf(&mo).Elem()
 		t := s.Type()
@@ -105,10 +105,16 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 		this.Cover = fmt.Sprintf(net.Koanf.String("librarything.url.cover"),
 			net.Koanf.String("librarything.key"), this.ISBN)
 	}
+
+	author := this.Author
+	if len(this.Authors) > 0 {
+		author = this.Authors[0].Name
+	}
+	if len(author) > 0 {
+		this.FirstAuthor, _ = providers.Providers["goodreads"].SearchAuthor(author)
+	}
+
 	this.Author = this.GetAuthors()
-
-	providers.Providers["goodreads"].SearchAuthor("Jonathan Littell")
-
 	if this.RatingsPercent == "" && this.RatingsSum > 0 {
 		this.RatingsPercent = fmt.Sprintf("%6.2f",
 			float64(this.RatingsSum)/float64(this.RatingsCount))
@@ -157,6 +163,9 @@ func assign(this *models.Work, key string, fieldName string) {
 				}
 				**/
 			}
+		}
+		if fieldName == "Title" || fieldName == "Authors" {
+			fmt.Println(fieldName, field, field.String(), field.Kind(), value.String())
 		}
 	}
 }
