@@ -62,7 +62,7 @@ func parseBook(goodreads GoodreadsResponse) (models.Metadata, error) {
 	meta := models.Metadata{
 		ID:      goodreads.Book.ID,
 		Title:   goodreads.Book.Title,
-		Authors: []models.Author{},
+		Authors: []models.Author{goodreads.Book.Authors.Author},
 		Identifiers: models.Identifiers{
 			ISBN10:     []string{goodreads.Book.ISBN},
 			ISBN13:     []string{goodreads.Book.Isbn13},
