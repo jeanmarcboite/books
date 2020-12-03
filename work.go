@@ -142,20 +142,22 @@ func printFieldNames(this models.Metadata) {
 }
 
 func assign(this *models.Work, key string, fieldName string) {
-	value := reflect.ValueOf(this.Online[key]).FieldByName(fieldName)
-	field := reflect.ValueOf(this).Elem().FieldByName(fieldName)
+	if fieldName != "RAW" {
+		value := reflect.ValueOf(this.Online[key]).FieldByName(fieldName)
+		field := reflect.ValueOf(this).Elem().FieldByName(fieldName)
 
-	if field.IsZero() {
-		// A Value can be changed only if it is
-		// addressable and was not obtained by
-		// the use of unexported struct fields.
-		if field.IsValid() && field.CanSet() {
-			field.Set(value)
-			/**
-			if field.Kind() == reflect.String {
-				field.SetString(value.String())
+		if field.IsZero() {
+			// A Value can be changed only if it is
+			// addressable and was not obtained by
+			// the use of unexported struct fields.
+			if field.IsValid() && field.CanSet() {
+				field.Set(value)
+				/**
+				if field.Kind() == reflect.String {
+					field.SetString(value.String())
+				}
+				**/
 			}
-			**/
 		}
 	}
 }

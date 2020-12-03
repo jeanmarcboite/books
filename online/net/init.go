@@ -1,9 +1,7 @@
 package net
 
 import (
-	"fmt"
-
-	"github.com/jeanmarcboite/librarytruc/pkg/books/online/assets"
+	"github.com/jeanmarcboite/books/online/assets"
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/rawbytes"
@@ -16,6 +14,6 @@ func init() {
 	conf, err := assets.Config.Find("urls.yaml")
 	if err == nil {
 		Koanf.Load(rawbytes.Provider(conf), yaml.Parser())
-		fmt.Println(string(conf))
+		// fmt.Println(string(conf))
 	}
 }
