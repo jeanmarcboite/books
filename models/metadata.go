@@ -40,6 +40,7 @@ type Metadata struct {
 	ISBN string
 
 	RAW interface{}
+	XML string
 }
 
 // Identifiers -- book identifiers

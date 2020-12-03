@@ -46,15 +46,10 @@ func getMetadata(what string, where string) (models.Metadata, error) {
 
 	/* response could be: <error>Page not found</error> */
 	xml.Unmarshal(response, &goodreads)
-
-	if goodreads.XMLName.Local == "GoodreadsResponse" {
-		return parseBook(goodreads)
+	if goodreads.XMLName.Local != "GoodreadsResponse" {
+		return models.Metadata{}, fmt.Errorf("Nothing found on goodreads for '%v'", what)
 	}
 
-	return models.Metadata{}, fmt.Errorf("Nothing found on goodreads for '%v'", what)
-}
-
-func parseBook(goodreads GoodreadsResponse) (models.Metadata, error) {
 	reviewsCount, _ := strconv.Atoi(goodreads.Book.Work.ReviewsCount.Text)
 	ratingsSum, _ := strconv.Atoi(goodreads.Book.Work.RatingsSum.Text)
 	ratingsCount, _ := strconv.Atoi(goodreads.Book.Work.RatingsCount.Text)
@@ -80,6 +75,7 @@ func parseBook(goodreads GoodreadsResponse) (models.Metadata, error) {
 		RatingDist:     goodreads.Book.Work.RatingDist,
 
 		RAW: goodreads,
+		XML: string(response),
 	}
 
 	if false {
