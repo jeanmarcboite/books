@@ -3,6 +3,7 @@ package goodreads
 import (
 	"encoding/xml"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/jeanmarcboite/books/models"
@@ -41,38 +42,42 @@ func getMetadata(what string, where string) (models.Metadata, error) {
 		return models.Metadata{}, err
 	}
 
-	var goodreads Response
+	var goodreads GoodreadsResponse
 
 	/* response could be: <error>Page not found</error> */
 	xml.Unmarshal(response, &goodreads)
 
 	if goodreads.XMLName.Local == "GoodreadsResponse" {
-		return parseBook(goodreads.Books[0])
+		return parseBook(goodreads)
 	}
 
 	return models.Metadata{}, fmt.Errorf("Nothing found on goodreads for '%v'", what)
 }
 
-func parseBook(goodreads Book) (models.Metadata, error) {
+func parseBook(goodreads GoodreadsResponse) (models.Metadata, error) {
+	reviewsCount, _ := strconv.Atoi(goodreads.Book.Work.ReviewsCount.Text)
+	ratingsSum, _ := strconv.Atoi(goodreads.Book.Work.RatingsSum.Text)
+	ratingsCount, _ := strconv.Atoi(goodreads.Book.Work.RatingsCount.Text)
+
 	meta := models.Metadata{
-		ID:      goodreads.ID,
-		Title:   goodreads.Title,
+		ID:      goodreads.Book.ID,
+		Title:   goodreads.Book.Title,
 		Authors: []models.Author{},
 		Identifiers: models.Identifiers{
-			ISBN10:     []string{goodreads.ISBN},
-			ISBN13:     []string{goodreads.ISBN13},
-			ASIN:       goodreads.ASIN,
-			KindleASIN: goodreads.KindleASIN,
+			ISBN10:     []string{goodreads.Book.ISBN},
+			ISBN13:     []string{goodreads.Book.Isbn13},
+			ASIN:       goodreads.Book.Asin,
+			KindleASIN: goodreads.Book.KindleAsin,
 		},
-		PublishCountry: goodreads.CountryCode,
-		Publishers:     []string{goodreads.Publisher},
-		Description:    goodreads.Description,
-		Cover:          goodreads.ImageURL,
-		IsEbook:        goodreads.IsEbook,
-		ReviewsCount:   goodreads.Work.ReviewsCount,
-		RatingsSum:     goodreads.Work.RatingsSum,
-		RatingsCount:   goodreads.Work.RatingsCount,
-		Ratings:        goodreads.Work.RatingDist,
+		PublishCountry: goodreads.Book.CountryCode,
+		Publishers:     []string{goodreads.Book.Publisher},
+		Description:    goodreads.Book.Description,
+		Cover:          goodreads.Book.ImageURL,
+		IsEbook:        goodreads.Book.IsEbook,
+		ReviewsCount:   reviewsCount,
+		RatingsSum:     ratingsSum,
+		RatingsCount:   ratingsCount,
+		RatingDist:     goodreads.Book.Work.RatingDist,
 
 		RAW: goodreads,
 	}

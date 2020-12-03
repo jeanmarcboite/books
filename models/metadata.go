@@ -20,6 +20,7 @@ type Metadata struct {
 	ReviewsCount   int
 	RatingsSum     int
 	RatingsCount   int
+	RatingDist     string
 	URL            map[string]string
 	Cover          string
 	Covers         []string
