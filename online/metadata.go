@@ -2,8 +2,8 @@ package online
 
 import (
 	"github.com/jeanmarcboite/books/models"
+	"github.com/jeanmarcboite/books/online/providers"
 	"github.com/jeanmarcboite/books/online/providers/goodreads"
-	"github.com/jeanmarcboite/books/online/providers/google"
 	"github.com/jeanmarcboite/books/online/providers/openlibrary"
 )
 
@@ -12,19 +12,11 @@ func LookUpISBN(isbn string) (map[string]models.Metadata, error) {
 	metadata := make(map[string]models.Metadata)
 
 	// LibraryThing returns "APIs Temporarily disabled."
-	/** online providers */
-	type ProviderLookUpISBN func(isbn string) (models.Metadata, error)
 
-	providers := map[string]ProviderLookUpISBN{
-		goodreads.Name():   goodreads.LookUpISBN,
-		google.Name():      google.LookUpISBN,
-		openlibrary.Name(): openlibrary.LookUpISBN,
-	}
-
-	for provider, lookup := range providers {
-		m, err := lookup(isbn)
+	for name, provider := range providers.Providers {
+		m, err := provider.LookUpISBN(isbn)
 		if err == nil {
-			metadata[provider] = m
+			metadata[name] = m
 		}
 	}
 
