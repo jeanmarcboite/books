@@ -36,6 +36,7 @@ goodreads:
     id: 'https://www.goodreads.com/book/show/%v.xml'
     show: 'https://www.goodreads.com/book/show/%v'
     showAuthor: 'https://www.goodreads.com/author/show/%v?format=xml'
+    searchAuthor: 'https://www.goodreads.com/api/author_url/%v'
 
 openlibrary:
   cover_url: 'http://covers.openlibrary.org/b/ISBN/%v-L.jpg'
