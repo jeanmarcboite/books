@@ -13,10 +13,10 @@ func LookUpISBN(isbn string) (map[string]models.Metadata, error) {
 
 	// LibraryThing returns "APIs Temporarily disabled."
 
-	for name, provider := range providers.Providers {
+	for _, provider := range providers.Providers {
 		m, err := provider.LookUpISBN(isbn)
 		if err == nil {
-			metadata[name] = m
+			metadata[provider.Name] = m
 		}
 	}
 

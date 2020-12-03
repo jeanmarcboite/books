@@ -82,6 +82,11 @@ func parseBook(goodreads GoodreadsResponse) (models.Metadata, error) {
 		RAW: goodreads,
 	}
 
+	if false {
+		s, _ := xml.MarshalIndent(meta.Authors, "", "   ")
+		fmt.Println(string(s))
+	}
+
 	return meta, nil
 }
 
@@ -99,7 +104,8 @@ func SearchAuthor(author string) (models.Author, error) {
 		log.Error().Str("author", author).Str("XMLName.Local", goodreads.XMLName.Local).Msg("Invalid goodreads response")
 		return models.Author{}, err
 	}
-
+	s, _ := xml.MarshalIndent(goodreads.Author, "goodreads.Author>>", "   ")
+	fmt.Println(string(s))
 	return models.Author{
 		ID:   goodreads.Author.ID,
 		Name: goodreads.Author.Name,

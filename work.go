@@ -5,12 +5,13 @@ import (
 	"reflect"
 	"strings"
 
+	"encoding/xml"
+
 	"github.com/rs/zerolog/log"
 
 	"github.com/jeanmarcboite/books/models"
 	"github.com/jeanmarcboite/books/online"
 	"github.com/jeanmarcboite/books/online/net"
-	"github.com/jeanmarcboite/books/online/providers"
 	"github.com/jeanmarcboite/epub"
 )
 
@@ -106,19 +107,13 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 			net.Koanf.String("librarything.key"), this.ISBN)
 	}
 
-	author := this.Author
-	if len(this.Authors) > 0 {
-		author = this.Authors[0].Name
-	}
-	if len(author) > 0 {
-		this.FirstAuthor, _ = providers.Providers["goodreads"].SearchAuthor(author)
-	}
-
 	this.Author = this.GetAuthors()
 	if this.RatingsPercent == "" && this.RatingsSum > 0 {
 		this.RatingsPercent = fmt.Sprintf("%6.2f",
 			float64(this.RatingsSum)/float64(this.RatingsCount))
 	}
+	s, _ := xml.MarshalIndent(this.Authors, "this.Authors:::", "   ")
+	fmt.Println(string(s))
 
 	return this, nil
 }
@@ -164,8 +159,10 @@ func assign(this *models.Work, key string, fieldName string) {
 				**/
 			}
 		}
-		if fieldName == "Title" || fieldName == "Authors" {
-			fmt.Println(fieldName, field, field.String(), field.Kind(), value.String())
+		if false {
+			if fieldName == "Title" || fieldName == "Authors" {
+				fmt.Println(fieldName, field, field.String(), field.Kind(), value.String())
+			}
 		}
 	}
 }
