@@ -28,6 +28,7 @@ func get(isbn string, where string) (models.Metadata, error) {
 
 	meta, err := getMeta(response)
 	meta.ISBN = isbn
+	meta.XML = string(resp)
 	return meta, err
 }
 

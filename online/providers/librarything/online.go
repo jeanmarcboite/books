@@ -57,7 +57,8 @@ func get(what string, where string) (models.Metadata, error) {
 			return models.Metadata{}, err
 		}
 
-		return getMeta(response)
+		meta, err := getMeta(response)
+		meta.XML = string(resp)
 	}
 
 	return models.Metadata{}, fmt.Errorf("LibraryThing for '%v': %v", what, response)
