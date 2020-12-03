@@ -23,7 +23,7 @@ func SearchTitle(title string) (models.Metadata, error) {
 
 func getResponse(what string, where string) ([]byte, error) {
 	url := fmt.Sprintf(where, what)
-	//log.Debug().Str("where", where).Str("what", what).Str("url", url).Msg("getResponse")
+	log.Debug().Str("where", where).Str("what", what).Str("url", url).Msg("getResponse")
 	response, err := net.HTTPGetWithKey(url,
 		net.Koanf.String("goodreads.keyname"),
 		net.Koanf.String("goodreads.key"))
@@ -81,6 +81,16 @@ func parseBook(goodreads Book) (models.Metadata, error) {
 }
 
 func SearchAuthor(author string) (models.Author, error) {
+	_, err := getResponse(author, net.Koanf.String("goodreads.url.searchAuthor"))
+
+	if err != nil {
+		return models.Author{}, err
+	}
+
+	return models.Author{}, err
+}
+
+func ShowAuthor(author string) (models.Author, error) {
 	_, err := getResponse(author, net.Koanf.String("goodreads.url.showAuthor"))
 
 	if err != nil {

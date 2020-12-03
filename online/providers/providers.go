@@ -15,7 +15,7 @@ type Provider struct {
 }
 
 var Providers = map[string]Provider{
-	goodreads.Name():   {LookUpISBN: goodreads.LookUpISBN},
+	goodreads.Name():   {LookUpISBN: goodreads.LookUpISBN, SearchAuthor: goodreads.SearchAuthor},
 	google.Name():      {LookUpISBN: google.LookUpISBN},
 	openlibrary.Name(): {LookUpISBN: openlibrary.LookUpISBN},
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/jeanmarcboite/books/models"
 	"github.com/jeanmarcboite/books/online"
 	"github.com/jeanmarcboite/books/online/net"
+	"github.com/jeanmarcboite/books/online/providers"
 	"github.com/jeanmarcboite/epub"
 )
 
@@ -105,6 +106,8 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 			net.Koanf.String("librarything.key"), this.ISBN)
 	}
 	this.Author = this.GetAuthors()
+
+	providers.Providers["goodreads"].SearchAuthor("Jonathan Littell")
 
 	if this.RatingsPercent == "" && this.RatingsSum > 0 {
 		this.RatingsPercent = fmt.Sprintf("%6.2f",
