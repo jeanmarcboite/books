@@ -1,6 +1,8 @@
 package models
 
-import "strings"
+import (
+	"strings"
+)
 
 // Metadata -- book metadata
 type Metadata struct {
@@ -36,13 +38,6 @@ type Metadata struct {
 	ISBN string
 
 	RAW interface{}
-}
-
-// Author -- Author name and id
-type Author struct {
-	Name string
-	Key  string
-	ID   string
 }
 
 // Identifiers -- book identifiers

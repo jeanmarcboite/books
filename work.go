@@ -9,6 +9,7 @@ import (
 
 	"github.com/jeanmarcboite/books/models"
 	"github.com/jeanmarcboite/books/online"
+	"github.com/jeanmarcboite/books/online/goodreads"
 	"github.com/jeanmarcboite/books/online/net"
 	"github.com/jeanmarcboite/epub"
 )
@@ -105,6 +106,9 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 			net.Koanf.String("librarything.key"), this.ISBN)
 	}
 	this.Author = this.GetAuthors()
+	for _, author := range this.Authors {
+		_, _ = goodreads.SearchAuthor(author.Name)
+	}
 
 	if this.RatingsPercent == "" && this.RatingsSum > 0 {
 		this.RatingsPercent = fmt.Sprintf("%6.2f",

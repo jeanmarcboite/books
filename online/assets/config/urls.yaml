@@ -30,10 +30,12 @@ goodreads:
   key: 'iKEG2vmZFhfw1GkHkMRk7w'
   keyname: 'key'
   url:
+    nocover: 'http://www.goodreads.com/images/nocover60x80.jpg'
     isbn: 'https://www.goodreads.com/book/isbn/%v'
     title: 'https://www.goodreads.com/book/title.xml?title=%v'
     id: 'https://www.goodreads.com/book/show/%v.xml'
     show: 'https://www.goodreads.com/book/show/%v'
+    showAuthor: 'https://www.goodreads.com/author/show/%v'
 
 openlibrary:
   cover_url: 'http://covers.openlibrary.org/b/ISBN/%v-L.jpg'
