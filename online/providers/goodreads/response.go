@@ -2,6 +2,7 @@ package goodreads
 
 import (
 	"encoding/xml"
+
 	"github.com/jeanmarcboite/books/models"
 )
 
@@ -109,17 +110,13 @@ type GoodreadsResponse struct {
 		URL                string `xml:"url"`
 		Link               string `xml:"link"`
 		Authors            struct {
-			Text   string `xml:",chardata"`
-			Author models.Author  `xml:"author"`
+			Text   string        `xml:",chardata"`
+			Author models.Author `xml:"author"`
 		} `xml:"authors"`
 		ReviewsWidget  string `xml:"reviews_widget"`
 		PopularShelves struct {
-			Text  string `xml:",chardata"`
-			Shelf []struct {
-				Text  string `xml:",chardata"`
-				Name  string `xml:"name,attr"`
-				Count string `xml:"count,attr"`
-			} `xml:"shelf"`
+			// Text  string `xml:",chardata"`
+			Shelf []models.Shelf `xml:"shelf"`
 		} `xml:"popular_shelves"`
 		BookLinks struct {
 			Text     string `xml:",chardata"`

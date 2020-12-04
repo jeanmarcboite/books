@@ -22,6 +22,7 @@ type Doc struct {
 	Language         []string `json:"language"`
 	OCLC             []string `json:"oclc"`
 	Place            []string `json:"place"`
+	PublishCountry   []string `json:"publish_country"`
 	PublishDate      []string `json:"publish_date"`
 	PublishYear      []int    `json:"publish_year"`
 	Seed             []string `json:"seed"`

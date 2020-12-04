@@ -64,6 +64,7 @@ func getMetadata(what string, where string) (models.Metadata, error) {
 			ASIN:       goodreads.Book.Asin,
 			KindleASIN: goodreads.Book.KindleAsin,
 		},
+		PopularShelves: goodreads.Book.PopularShelves.Shelf,
 		PublishCountry: goodreads.Book.CountryCode,
 		Publishers:     []string{goodreads.Book.Publisher},
 		Description:    goodreads.Book.Description,

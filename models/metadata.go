@@ -30,6 +30,7 @@ type Metadata struct {
 	PublishCountry string
 	Description    string
 	Subjects       string
+	PopularShelves []Shelf
 	NumberOfPages  int
 	Preview        string
 	PhysicalFormat string
@@ -54,6 +55,12 @@ type Identifiers struct {
 	Gutenberg    []string
 	Goodreads    []string
 	Librarything []string
+}
+
+type Shelf struct {
+	// Text  string `xml:",chardata"`
+	Name  string `xml:"name,attr"`
+	Count string `xml:"count,attr"`
 }
 
 // GetAuthors -- return the author(s)
