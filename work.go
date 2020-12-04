@@ -142,7 +142,7 @@ func printFieldNames(this models.Metadata) {
 }
 
 func assign(this *models.Work, key string, fieldName string) {
-	if fieldName != "RAW" {
+	if fieldName != "RAW" && fieldName != "XML" {
 		value := reflect.ValueOf(this.Online[key]).FieldByName(fieldName)
 		field := reflect.ValueOf(this).Elem().FieldByName(fieldName)
 
