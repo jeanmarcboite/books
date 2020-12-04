@@ -76,7 +76,18 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 	this.URL = make(map[string]string)
 
 	if epub != nil {
-		this.Description = epub.Rootfiles[0].Metadata.Description
+		epubMetadata := epub.Rootfiles[0].Metadata
+		this.ID = "epub"
+		this.Title = epubMetadata.Title
+		if epubMetadata.Creator.Role == "aut" {
+			this.Author = epubMetadata.Creator.Text
+		}
+
+		if len(epubMetadata.Publisher) > 0 {
+			this.Publishers = []string{epubMetadata.Publisher}
+		}
+		this.Description = epubMetadata.Description
+		// TODO: identifier
 		this.Cover, _ = epub.GetCover()
 	}
 
