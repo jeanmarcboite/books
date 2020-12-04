@@ -56,6 +56,7 @@ func getMeta(response Response) (models.Metadata, error) {
 		NumberOfPages: item.VolumeInfo.PageCount,
 		Categories:    item.VolumeInfo.Categories,
 		Cover:         item.VolumeInfo.ImageLinks.Thumbnail,
+		Link:          item.VolumeInfo.InfoLink,
 		RAW:           item,
 	}, nil
 }

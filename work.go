@@ -98,7 +98,9 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 		for i := 0; i < s.NumField(); i++ {
 			assign(&this, online, t.Field(i).Name)
 		}
-		if metadata[online].ID != "" {
+		if metadata[online].Link != "" {
+			this.URL[online] = metadata[online].Link
+		} else if metadata[online].ID != "" {
 			if net.Koanf.Get(online+".url.show") != nil {
 				this.URL[online] = fmt.Sprintf(net.Koanf.String(online+".url.show"), metadata[online].ID)
 			}
