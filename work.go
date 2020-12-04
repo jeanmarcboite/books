@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"strings"
 
-	"encoding/xml"
-
 	"github.com/rs/zerolog/log"
 
 	"github.com/jeanmarcboite/books/models"
@@ -123,8 +121,6 @@ func work(metadata map[string]models.Metadata, epub *epub.EpubReaderCloser) (mod
 		this.RatingsPercent = fmt.Sprintf("%6.2f",
 			float64(this.RatingsSum)/float64(this.RatingsCount))
 	}
-	s, _ := xml.MarshalIndent(this.Authors, "this.Authors:::", "   ")
-	fmt.Println(string(s))
 
 	return this, nil
 }
