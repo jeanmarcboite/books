@@ -57,7 +57,7 @@ func get(what string, where string) (models.Metadata, error) {
 			return models.Metadata{}, err
 		}
 
-		meta, err := getMeta(response)
+		meta, _ := getMeta(response)
 		meta.XML = string(resp)
 	}
 
