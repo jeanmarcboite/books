@@ -20,6 +20,7 @@ type Book struct {
 	Pubdate      time.Time
 	LastModified time.Time
 	Comment      string
+	Authors      []uint
 }
 
 type Comment struct {
