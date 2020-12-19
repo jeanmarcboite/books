@@ -2,46 +2,32 @@ package calibre
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type DB struct {
-	books []Book
+type CalibreDB struct {
+	Books map[uint](*Book)
 }
 
-func ReadDB(filename string, debug bool) (DB, error) {
-	db := DB{}
-	s, err := sql.Open("sqlite3", filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	database := sqlx.NewDb(s, "sqlite3")
-	defer database.Close()
-	err = database.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-	rows, err := database.Queryx("select * from books")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		book := Book{}
-		err = rows.StructScan(&book)
-		if err != nil {
-			log.Fatal(err)
+func ReadDB(filename string, debug bool) (CalibreDB, error) {
+	db := CalibreDB{}
+	var err error = nil
+
+	sqlDB, err := sql.Open("sqlite3", filename)
+
+	if err == nil {
+		database := sqlx.NewDb(sqlDB, "sqlite3")
+		defer database.Close()
+		err = database.Ping()
+
+		if err == nil {
+			return ReadBooks(database)
 		}
-		log.Println(book.ID, book.Title)
 	}
-	err = rows.Err()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return db, nil
+
+	return db, err
 }
 
 /*
