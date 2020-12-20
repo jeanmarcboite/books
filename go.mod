@@ -11,6 +11,8 @@ require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/gobuffalo/packr/v2 v2.8.1
 	github.com/jeanmarcboite/epub v0.0.0-00010101000000-000000000000
+	github.com/jmoiron/sqlx v1.2.0
 	github.com/knadh/koanf v0.14.0
+	github.com/mattn/go-sqlite3 v1.14.5
 	github.com/rs/zerolog v1.20.0
 )
