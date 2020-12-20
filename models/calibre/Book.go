@@ -32,9 +32,8 @@ type Comment struct {
 	Text string
 }
 
-func ReadBooks(database *sqlx.DB) (CalibreDB, error) {
-	db := CalibreDB{}
-	db.Books = make(map[uint](*Book))
+func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
+	this.Books = make(map[uint](*Book))
 	rows, err := database.Queryx("select * from books")
 
 	if err == nil {
@@ -43,21 +42,26 @@ func ReadBooks(database *sqlx.DB) (CalibreDB, error) {
 			book := new(Book)
 			err = rows.StructScan(book)
 			if err != nil {
-				return db, err
+				return err
 			}
-			db.Books[book.ID] = book
+			this.Books[book.ID] = book
 		}
 
-		GetComments(database, &db)
-		db.ReadAuthors(database)
+		err = this.GetComments(database)
+		if err != nil {
+			return err
+		}
+		err = this.ReadAuthors(database)
 
-		return db, rows.Err()
+		if err == nil {
+			err = rows.Err()
+		}
 	}
 
-	return db, err
+	return err
 }
 
-func GetComments(database *sqlx.DB, db *CalibreDB) error {
+func (this *CalibreDB) GetComments(database *sqlx.DB) error {
 	rows, err := database.Queryx("select * from comments")
 
 	if err != nil {
@@ -72,7 +76,7 @@ func GetComments(database *sqlx.DB, db *CalibreDB) error {
 			return err
 		}
 
-		db.Books[comment.Book].Comment = comment.Text
+		this.Books[comment.Book].Comment = comment.Text
 	}
 
 	return rows.Err()

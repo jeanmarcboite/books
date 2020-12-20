@@ -30,7 +30,7 @@ func ReadDB(filename string, debug bool) (CalibreDB, error) {
 		err = database.Ping()
 
 		if err == nil {
-			return ReadBooks(database)
+			err = db.ReadBooks(database)
 		}
 	}
 
