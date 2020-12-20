@@ -36,3 +36,25 @@ func ReadDB(filename string, debug bool) (CalibreDB, error) {
 
 	return db, err
 }
+
+func (this *CalibreDB) GetStrings(database *sqlx.DB, from string) (map[uint]string, error) {
+	rows, err := database.Queryx("select * from " + from)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	strings := map[uint]string{}
+	for rows.Next() {
+		var ID uint
+		var val string
+		err = rows.Scan(&ID, &val)
+		if err != nil {
+			return strings, err
+		}
+
+		strings[ID] = val
+	}
+	return strings, err
+}

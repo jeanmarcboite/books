@@ -23,7 +23,9 @@ type Book struct {
 	LastModified time.Time `db:"last_modified"`
 	Comment      string
 
-	Authors [](*Author)
+	Authors     [](*Author)
+	Identifiers []Identifier
+	Languages   []Language
 }
 
 type Comment struct {
@@ -48,6 +50,14 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 		}
 
 		err = this.GetComments(database)
+		if err != nil {
+			return err
+		}
+		err = this.GetIdentifiers(database)
+		if err != nil {
+			return err
+		}
+		err = this.GetLanguages(database)
 		if err != nil {
 			return err
 		}
