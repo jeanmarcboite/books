@@ -4,17 +4,17 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func (this *CalibreDB) GetTags(database *sqlx.DB) error {
-	tags, err := this.GetStrings(database, "tags")
+func GetTags(db *CalibreDB, database *sqlx.DB) error {
+	tags, err := db.GetStrings(database, "tags")
 	if err == nil {
-		return this.GetBooksTagsLink(database, tags)
+		return GetBooksTagsLink(db, database, tags)
 	}
 
 	return err
 }
 
-func (this CalibreDB) GetBooksTagsLink(database *sqlx.DB, tags map[uint]string) error {
-	if this.Books == nil {
+func GetBooksTagsLink(db *CalibreDB, database *sqlx.DB, tags map[uint]string) error {
+	if db.Books == nil {
 		return nil
 	}
 	rows, err := database.Queryx("select book, tag from books_tags_link")
@@ -28,7 +28,7 @@ func (this CalibreDB) GetBooksTagsLink(database *sqlx.DB, tags map[uint]string) 
 			if err != nil {
 				return err
 			}
-			this.Books[book].Tags = append(this.Books[book].Tags, tags[tag])
+			db.Books[book].Tags = append(db.Books[book].Tags, tags[tag])
 		}
 	}
 	return err

@@ -9,10 +9,10 @@ type Language struct {
 	ItemOrder uint
 }
 
-func (this *CalibreDB) GetLanguages(database *sqlx.DB) error {
-	languages, err := this.GetStrings(database, "languages")
+func GetLanguages(db *CalibreDB, database *sqlx.DB) error {
+	languages, err := db.GetStrings(database, "languages")
 	if err == nil {
-		return this.GetBooksLanguagesLink(database, languages)
+		return db.GetBooksLanguagesLink(database, languages)
 	}
 
 	return err

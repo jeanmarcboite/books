@@ -9,7 +9,7 @@ type Identifier struct {
 	Val  string
 }
 
-func (this *CalibreDB) GetIdentifiers(database *sqlx.DB) error {
+func GetIdentifiers(db *CalibreDB, database *sqlx.DB) error {
 	rows, err := database.Queryx("select book, type, val from identifiers")
 
 	if err != nil {
@@ -27,7 +27,7 @@ func (this *CalibreDB) GetIdentifiers(database *sqlx.DB) error {
 			return err
 		}
 
-		this.Books[book].Identifiers = append(this.Books[book].Identifiers, identifier)
+		db.Books[book].Identifiers = append(db.Books[book].Identifiers, identifier)
 	}
 
 	return rows.Err()

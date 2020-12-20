@@ -25,8 +25,8 @@ func (this Author) MarshalJSON() ([]byte, error) {
 	return json.Marshal(this.Name)
 }
 
-func (this *CalibreDB) ReadAuthors(database *sqlx.DB) error {
-	this.Authors = make(map[uint](*Author))
+func GetAuthors(db *CalibreDB, database *sqlx.DB) error {
+	db.Authors = make(map[uint](*Author))
 	rows, err := database.Queryx("select * from authors")
 	if err == nil {
 		defer rows.Close()
@@ -36,9 +36,9 @@ func (this *CalibreDB) ReadAuthors(database *sqlx.DB) error {
 			if err != nil {
 				return err
 			}
-			this.Authors[author.ID] = author
+			db.Authors[author.ID] = author
 		}
-		err = this.GetBooksAuthorsLink(database)
+		err = GetBooksAuthorsLink(db, database)
 		if err == nil {
 			return rows.Err()
 		}
@@ -47,8 +47,8 @@ func (this *CalibreDB) ReadAuthors(database *sqlx.DB) error {
 	return err
 }
 
-func (this CalibreDB) GetBooksAuthorsLink(database *sqlx.DB) error {
-	if (this.Authors == nil) || (this.Books == nil) {
+func GetBooksAuthorsLink(db *CalibreDB, database *sqlx.DB) error {
+	if db.Books == nil {
 		return nil
 	}
 	rows, err := database.Queryx("select * from books_authors_link")
@@ -61,8 +61,8 @@ func (this CalibreDB) GetBooksAuthorsLink(database *sqlx.DB) error {
 			if err != nil {
 				return err
 			}
-			this.Authors[link.Author].Books = append(this.Authors[link.Author].Books, this.Books[link.Book])
-			this.Books[link.Book].Authors = append(this.Books[link.Book].Authors, this.Authors[link.Author])
+			db.Authors[link.Author].Books = append(db.Authors[link.Author].Books, db.Books[link.Book])
+			db.Books[link.Book].Authors = append(db.Books[link.Book].Authors, db.Authors[link.Author])
 		}
 	}
 	return err

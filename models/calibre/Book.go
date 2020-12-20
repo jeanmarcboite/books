@@ -52,7 +52,7 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 
 		type Get func(*CalibreDB, *sqlx.DB) error
 
-		getFunctions := []Get{GetComments}
+		getFunctions := []Get{GetComments, GetIdentifiers, GetLanguages, GetTags, GetAuthors}
 
 		for _, f := range getFunctions {
 			err = f(this, database)
@@ -60,45 +60,9 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 				return err
 			}
 		}
-		err = this.GetIdentifiers(database)
-		if err != nil {
-			return err
-		}
-		err = this.GetLanguages(database)
-		if err != nil {
-			return err
-		}
-		err = this.GetTags(database)
-		if err != nil {
-			return err
-		}
-		err = this.ReadAuthors(database)
 
-		if err == nil {
-			err = rows.Err()
-		}
+		err = rows.Err()
 	}
 
 	return err
-}
-
-func GetComments(db *CalibreDB, database *sqlx.DB) error {
-	rows, err := database.Queryx("select * from comments")
-
-	if err != nil {
-		return err
-	}
-
-	defer rows.Close()
-	for rows.Next() {
-		var comment Comment
-		err = rows.StructScan(&comment)
-		if err != nil {
-			return err
-		}
-
-		db.Books[comment.Book].Comment = comment.Text
-	}
-
-	return rows.Err()
 }
