@@ -7,9 +7,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type NullString sql.NullString
 type NameSort struct {
 	Name string
-	Sort sql.NullString
+	Sort string
 }
 
 func GetNamesSort(database *sqlx.DB, from string) (map[uint](*NameSort), error) {
@@ -23,13 +24,18 @@ func GetNamesSort(database *sqlx.DB, from string) (map[uint](*NameSort), error) 
 	names := map[uint](*NameSort){}
 	for rows.Next() {
 		var ID uint
-		var val = new(NameSort)
-		err = rows.Scan(&ID, &val.Name, &val.Sort)
+		var name string
+		var sort sql.NullString
+		err = rows.Scan(&ID, &name, &sort)
 		if err != nil {
 			return names, err
 		}
+		val := NameSort{Name: name}
+		if sort.Valid {
+			val.Sort = sort.String
+		}
 
-		names[ID] = val
+		names[ID] = &val
 	}
 
 	return names, err
