@@ -28,6 +28,7 @@ type Book struct {
 	Languages   []Language
 	Tags        []string
 	Publishers  [](*NameSort)
+	Series      [](*NameSort)
 }
 
 type Comment struct {
@@ -52,19 +53,15 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 		}
 
 		type Get func(*CalibreDB, *sqlx.DB) error
+		type GetSort func(*CalibreDB, *sqlx.DB) error
 
-		getFunctions := []Get{GetComments, GetIdentifiers, GetLanguages, GetTags, GetAuthors}
+		getFunctions := []Get{GetComments, GetIdentifiers, GetLanguages, GetTags, GetAuthors, GetPublishers, GetSeries}
 
 		for _, f := range getFunctions {
 			err = f(this, database)
 			if err != nil {
 				return err
 			}
-		}
-
-		err = GetPublishers(this, database)
-		if err != nil {
-			return err
 		}
 		err = rows.Err()
 	}

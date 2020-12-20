@@ -13,7 +13,7 @@ type NameSort struct {
 }
 
 func GetNamesSort(database *sqlx.DB, from string) (map[uint](*NameSort), error) {
-	rows, err := database.Queryx("select * from " + from + "s")
+	rows, err := database.Queryx("select * from " + from)
 
 	if err != nil {
 		return nil, err
@@ -35,10 +35,10 @@ func GetNamesSort(database *sqlx.DB, from string) (map[uint](*NameSort), error) 
 	return names, err
 }
 
-func GetNames(db *CalibreDB, database *sqlx.DB, what string, appendName func(uint, *NameSort)) error {
-	names, err := GetNamesSort(database, what)
+func GetNames(db *CalibreDB, database *sqlx.DB, what string, from string, appendName func(uint, *NameSort)) error {
+	names, err := GetNamesSort(database, from)
 	if err == nil {
-		return GetBooksNamesLink(db, database, what, names, appendName)
+		return GetBooksNamesLink(db, database, what, from, names, appendName)
 	}
 
 	return err
@@ -48,12 +48,13 @@ func GetBooksNamesLink(
 	db *CalibreDB,
 	database *sqlx.DB,
 	what string,
+	from string,
 	names map[uint](*NameSort),
 	appendName func(uint, *NameSort)) error {
 	if db.Books == nil {
 		return nil
 	}
-	rows, err := database.Queryx("select book, " + what + " from books_" + what + "s_link")
+	rows, err := database.Queryx("select book, " + what + " from books_" + from + "_link")
 
 	if err == nil {
 		defer rows.Close()
@@ -72,7 +73,13 @@ func GetBooksNamesLink(
 }
 
 func GetPublishers(db *CalibreDB, database *sqlx.DB) error {
-	return GetNames(db, database, "publisher", func(book uint, data *NameSort) {
+	return GetNames(db, database, "publisher", "publishers", func(book uint, data *NameSort) {
 		db.Books[book].Publishers = append(db.Books[book].Publishers, data)
+	})
+}
+
+func GetSeries(db *CalibreDB, database *sqlx.DB) error {
+	return GetNames(db, database, "series", "series", func(book uint, data *NameSort) {
+		db.Books[book].Series = append(db.Books[book].Series, data)
 	})
 }
