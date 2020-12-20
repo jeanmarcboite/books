@@ -2,7 +2,6 @@ package calibre
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -26,7 +25,7 @@ func (this Author) MarshalJSON() ([]byte, error) {
 	return json.Marshal(this.Name)
 }
 
-func (this CalibreDB) ReadAuthors(database *sqlx.DB) error {
+func (this *CalibreDB) ReadAuthors(database *sqlx.DB) error {
 	this.Authors = make(map[uint](*Author))
 	rows, err := database.Queryx("select * from authors")
 	if err == nil {
@@ -37,11 +36,9 @@ func (this CalibreDB) ReadAuthors(database *sqlx.DB) error {
 			if err != nil {
 				return err
 			}
-			fmt.Println(author)
 			this.Authors[author.ID] = author
 		}
 		err = this.GetBooksAuthorsLink(database)
-
 		if err == nil {
 			return rows.Err()
 		}
@@ -61,7 +58,6 @@ func (this CalibreDB) GetBooksAuthorsLink(database *sqlx.DB) error {
 		var link BookAuthorLink
 		for rows.Next() {
 			err = rows.StructScan(&link)
-			fmt.Println(link)
 			if err != nil {
 				return err
 			}
