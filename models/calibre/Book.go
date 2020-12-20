@@ -22,7 +22,8 @@ type Book struct {
 	Pubdate      time.Time
 	LastModified time.Time `db:"last_modified"`
 	Comment      string
-	Authors      []uint
+
+	Authors [](*Author)
 }
 
 type Comment struct {
@@ -48,6 +49,7 @@ func ReadBooks(database *sqlx.DB) (CalibreDB, error) {
 		}
 
 		GetComments(database, &db)
+		db.ReadAuthors(database)
 
 		return db, rows.Err()
 	}
