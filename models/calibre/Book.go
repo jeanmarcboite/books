@@ -27,6 +27,7 @@ type Book struct {
 	Identifiers []Identifier
 	Languages   []Language
 	Tags        []string
+	Publishers  [](*NameSort)
 }
 
 type Comment struct {
@@ -61,6 +62,10 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 			}
 		}
 
+		err = GetPublishers(this, database)
+		if err != nil {
+			return err
+		}
 		err = rows.Err()
 	}
 
