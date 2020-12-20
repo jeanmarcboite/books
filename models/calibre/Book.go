@@ -26,6 +26,7 @@ type Book struct {
 	Authors     [](*Author)
 	Identifiers []Identifier
 	Languages   []Language
+	Tags        []string
 }
 
 type Comment struct {
@@ -49,7 +50,7 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 			this.Books[book.ID] = book
 		}
 
-		err = this.GetComments(database)
+		err = GetComments(this, database)
 		if err != nil {
 			return err
 		}
@@ -58,6 +59,10 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 			return err
 		}
 		err = this.GetLanguages(database)
+		if err != nil {
+			return err
+		}
+		err = this.GetTags(database)
 		if err != nil {
 			return err
 		}
@@ -71,7 +76,7 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 	return err
 }
 
-func (this *CalibreDB) GetComments(database *sqlx.DB) error {
+func GetComments(db *CalibreDB, database *sqlx.DB) error {
 	rows, err := database.Queryx("select * from comments")
 
 	if err != nil {
@@ -86,7 +91,7 @@ func (this *CalibreDB) GetComments(database *sqlx.DB) error {
 			return err
 		}
 
-		this.Books[comment.Book].Comment = comment.Text
+		db.Books[comment.Book].Comment = comment.Text
 	}
 
 	return rows.Err()
