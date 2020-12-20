@@ -50,9 +50,15 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 			this.Books[book.ID] = book
 		}
 
-		err = GetComments(this, database)
-		if err != nil {
-			return err
+		type Get func(*CalibreDB, *sqlx.DB) error
+
+		getFunctions := []Get{GetComments}
+
+		for _, f := range getFunctions {
+			err = f(this, database)
+			if err != nil {
+				return err
+			}
 		}
 		err = this.GetIdentifiers(database)
 		if err != nil {
