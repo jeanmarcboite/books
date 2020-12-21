@@ -3,6 +3,7 @@ package calibre
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -12,6 +13,11 @@ type CalibreDB struct {
 	Books         map[uint](*Book)
 	Authors       map[uint](*Author)
 	CustomColumns map[uint]CustomColumn
+}
+
+type TableRowData interface {
+	Add(db *CalibreDB)
+	StructScan(rows *sqlx.Rows) (TableRowData, error)
 }
 
 func (this CalibreDB) String() string {
@@ -61,4 +67,23 @@ func (this *CalibreDB) GetStrings(database *sqlx.DB, from string) (map[uint]stri
 		strings[ID] = val
 	}
 	return strings, err
+}
+
+func getTable(db *CalibreDB, database *sqlx.DB, table string, data TableRowData, StructScan func(rows *sqlx.Rows) error) error {
+	rows, err := database.Queryx("select * from " + table)
+
+	if err == nil {
+		defer rows.Close()
+		for rows.Next() {
+			data, err = data.StructScan(rows)
+			if err != nil {
+				return fmt.Errorf("scanning table %s: %s", table, err.Error())
+			}
+			data.Add(db)
+		}
+
+		err = rows.Err()
+	}
+
+	return err
 }
