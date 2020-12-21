@@ -2,7 +2,6 @@ package calibre
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -71,7 +70,6 @@ func GetBooksNamesLink(
 			if err != nil {
 				return err
 			}
-			fmt.Println(book, name)
 			appendName(book, names[name])
 		}
 	}

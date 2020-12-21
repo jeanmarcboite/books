@@ -23,14 +23,15 @@ type Book struct {
 	LastModified time.Time `db:"last_modified"`
 	Comment      string
 
-	Authors     [](*Author)
-	Annotations []Annotation
-	Data        Data
-	Identifiers []Identifier
-	Languages   []Language
-	Tags        []string
-	Publishers  [](*NameSort)
-	Series      [](*NameSort)
+	Authors           [](*Author)
+	Annotations       []Annotation
+	Data              Data
+	ConversionOptions ConversionOptions
+	Identifiers       []Identifier
+	Languages         []Language
+	Tags              []string
+	Publishers        [](*NameSort)
+	Series            [](*NameSort)
 }
 
 type Comment struct {
@@ -61,7 +62,8 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 			GetIdentifiers,
 			GetLanguages,
 			GetTags, GetAuthors, GetPublishers,
-			GetSeries, GetAnnotations, GetData}
+			GetSeries, GetAnnotations, GetData,
+			GetConversionOptions}
 
 		for _, f := range getFunctions {
 			err = f(this, database)

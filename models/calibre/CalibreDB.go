@@ -9,8 +9,9 @@ import (
 )
 
 type CalibreDB struct {
-	Books   map[uint](*Book)
-	Authors map[uint](*Author)
+	Books         map[uint](*Book)
+	Authors       map[uint](*Author)
+	CustomColumns map[uint]CustomColumn
 }
 
 func (this CalibreDB) String() string {
@@ -31,6 +32,9 @@ func ReadDB(filename string, debug bool) (CalibreDB, error) {
 
 		if err == nil {
 			err = db.ReadBooks(database)
+		}
+		if err == nil {
+			err = GetCustomColumns(&db, database)
 		}
 	}
 
