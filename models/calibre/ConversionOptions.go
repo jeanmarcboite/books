@@ -4,7 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type ConversionOptions struct {
+type ConversionOption struct {
 	Format string
 	Data   []byte
 }
@@ -26,7 +26,7 @@ func GetConversionOptions(db *CalibreDB, database *sqlx.DB) error {
 			return err
 		}
 
-		db.Books[book].ConversionOptions = ConversionOptions{Format: format, Data: data}
+		db.Books[book].ConversionOption = ConversionOption{Format: format, Data: data}
 	}
 
 	return rows.Err()

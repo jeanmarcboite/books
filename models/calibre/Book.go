@@ -23,16 +23,16 @@ type Book struct {
 	LastModified time.Time `db:"last_modified"`
 	Comment      string
 
-	Authors           [](*Author)
-	Annotations       []Annotation
-	Data              Data
-	ConversionOptions ConversionOptions
-	Identifiers       []Identifier
-	Languages         []Language
-	Tags              []string
-	Publishers        [](*NameSort)
-	Series            [](*NameSort)
-	LastReadPosition  LastReadPosition
+	Authors          [](*Author)
+	Annotations      []Annotation
+	Data             Data
+	ConversionOption ConversionOption
+	Identifiers      []Identifier
+	Languages        []Language
+	Tags             []string
+	Publishers       [](*NameSort)
+	Series           [](*NameSort)
+	LastReadPosition LastReadPosition
 }
 
 func (this Book) Add(db *CalibreDB) {
