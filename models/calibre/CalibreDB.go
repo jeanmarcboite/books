@@ -10,9 +10,11 @@ import (
 )
 
 type CalibreDB struct {
-	Books         map[uint](*Book)
+	ID            string
+	Books         map[uint]*Book
 	Authors       map[uint](*Author)
 	CustomColumns map[uint]CustomColumn
+	Feeds         map[uint]Feed
 }
 
 type TableRowData interface {
@@ -35,6 +37,18 @@ func ReadDB(filename string, debug bool) (CalibreDB, error) {
 		database := sqlx.NewDb(sqlDB, "sqlite3")
 		defer database.Close()
 		err = database.Ping()
+		rows, err := database.Queryx("select uuid from library_id")
+		if err == nil {
+			defer rows.Close()
+			for rows.Next() {
+				err = rows.Scan(&db.ID)
+				if err != nil {
+					return db, fmt.Errorf("scanning library_id: %s", err.Error())
+				}
+			}
+
+			err = rows.Err()
+		}
 
 		if err == nil {
 			err = db.ReadBooks(database)

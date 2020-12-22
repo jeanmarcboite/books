@@ -4,23 +4,26 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type Comment struct {
+	ID   uint
+	Book uint
+	Text string
+}
+
+func (this Comment) Add(db *CalibreDB) {
+	db.Books[this.Book].Comment = this.Text
+}
+
+func (this Comment) StructScan(rows *sqlx.Rows) (TableRowData, error) {
+	err := rows.StructScan(&this)
+
+	return this, err
+}
+
 func GetComments(db *CalibreDB, database *sqlx.DB) error {
-	rows, err := database.Queryx("select * from comments")
+	var comment Comment
 
-	if err != nil {
-		return err
-	}
-
-	defer rows.Close()
-	for rows.Next() {
-		var comment Comment
-		err = rows.StructScan(&comment)
-		if err != nil {
-			return err
-		}
-
-		db.Books[comment.Book].Comment = comment.Text
-	}
-
-	return rows.Err()
+	return getTable(db, database, "comments", comment, func(rows *sqlx.Rows) error {
+		return rows.StructScan(&comment)
+	})
 }

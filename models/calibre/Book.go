@@ -32,29 +32,29 @@ type Book struct {
 	Tags              []string
 	Publishers        [](*NameSort)
 	Series            [](*NameSort)
+	LastReadPosition  LastReadPosition
 }
 
-type Comment struct {
-	ID   uint
-	Book uint
-	Text string
+func (this Book) Add(db *CalibreDB) {
+	book := this
+	db.Books[this.ID] = &book
+}
+
+func (this Book) StructScan(rows *sqlx.Rows) (TableRowData, error) {
+	err := rows.StructScan(&this)
+
+	return this, err
 }
 
 func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
-	this.Books = make(map[uint](*Book))
-	rows, err := database.Queryx("select * from books")
+	var book Book
+	this.Books = make(map[uint]*Book)
+
+	err := getTable(this, database, "books", book, func(rows *sqlx.Rows) error {
+		return rows.StructScan(&book)
+	})
 
 	if err == nil {
-		defer rows.Close()
-		for rows.Next() {
-			book := new(Book)
-			err = rows.StructScan(book)
-			if err != nil {
-				return err
-			}
-			this.Books[book.ID] = book
-		}
-
 		type Get func(*CalibreDB, *sqlx.DB) error
 
 		getFunctions := []Get{
@@ -63,7 +63,8 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 			GetLanguages,
 			GetTags, GetAuthors, GetPublishers,
 			GetSeries, GetAnnotations, GetData,
-			GetConversionOptions}
+			GetConversionOptions, GetFeeds,
+			GetLastReadPositions}
 
 		for _, f := range getFunctions {
 			err = f(this, database)
@@ -71,7 +72,6 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 				return err
 			}
 		}
-		err = rows.Err()
 	}
 
 	return err
