@@ -11,6 +11,7 @@ import (
 
 type CalibreDB struct {
 	ID            string
+	Filename      string
 	Books         map[uint]*Book
 	Authors       map[uint](*Author)
 	CustomColumns map[uint]CustomColumn
@@ -28,7 +29,7 @@ func (this CalibreDB) String() string {
 }
 
 func ReadDB(filename string, debug bool) (CalibreDB, error) {
-	db := CalibreDB{}
+	db := CalibreDB{Filename: filename}
 	var err error = nil
 
 	sqlDB, err := sql.Open("sqlite3", filename)
