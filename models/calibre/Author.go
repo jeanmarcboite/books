@@ -12,7 +12,7 @@ type Author struct {
 	Sort string
 	Link string
 
-	Books [](*Book)
+	Books []uint
 }
 
 type BookAuthorLink struct {
@@ -61,8 +61,8 @@ func GetBooksAuthorsLink(db *CalibreDB, database *sqlx.DB) error {
 			if err != nil {
 				return err
 			}
-			db.Authors[link.Author].Books = append(db.Authors[link.Author].Books, db.Books[link.Book])
-			db.Books[link.Book].Authors = append(db.Books[link.Book].Authors, db.Authors[link.Author])
+			db.Authors[link.Author].Books = append(db.Authors[link.Author].Books, link.Book)
+			db.Books[link.Book].Authors = append(db.Books[link.Book].Authors, link.Author)
 		}
 	}
 	return err

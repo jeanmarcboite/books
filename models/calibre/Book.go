@@ -23,7 +23,7 @@ type Book struct {
 	LastModified time.Time `db:"last_modified"`
 	Comment      string
 
-	Authors          [](*Author)
+	Authors          []uint
 	Annotations      []Annotation
 	Data             Data
 	ConversionOption ConversionOption
