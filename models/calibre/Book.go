@@ -29,6 +29,7 @@ type Book struct {
 	ConversionOption ConversionOption
 	Identifiers      []Identifier
 	Languages        []Language
+	Rating           uint
 	Tags             []string
 	Publishers       [](*NameSort)
 	Series           [](*NameSort)
@@ -63,7 +64,7 @@ func (this *CalibreDB) ReadBooks(database *sqlx.DB) error {
 			GetLanguages,
 			GetTags, GetAuthors, GetPublishers,
 			GetSeries, GetAnnotations, GetData,
-			GetConversionOptions, GetFeeds,
+			GetConversionOptions, GetFeeds, GetRatings,
 			GetLastReadPositions}
 
 		for _, f := range getFunctions {
