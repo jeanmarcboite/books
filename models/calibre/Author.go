@@ -1,8 +1,6 @@
 package calibre
 
 import (
-	"encoding/json"
-
 	"github.com/jmoiron/sqlx"
 )
 
@@ -21,10 +19,11 @@ type BookAuthorLink struct {
 	Author uint
 }
 
+/*
 func (this Author) MarshalJSON() ([]byte, error) {
 	return json.Marshal(this.Name)
 }
-
+*/
 func GetAuthors(db *CalibreDB, database *sqlx.DB) error {
 	db.Authors = make(map[uint](*Author))
 	rows, err := database.Queryx("select * from authors")
