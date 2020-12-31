@@ -15,6 +15,7 @@ type CalibreDB struct {
 	Filename      string
 	Books         map[uint]*Book
 	Authors       map[uint](*Author)
+	Ratings       map[uint]uint
 	CustomColumns map[uint]CustomColumn
 	Feeds         map[uint]Feed
 }
