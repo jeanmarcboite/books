@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type Comment struct {
@@ -11,7 +12,11 @@ type Comment struct {
 }
 
 func (this Comment) Add(db *CalibreDB) {
-	db.Books[this.Book].Comment = this.Text
+	if book, ok := db.Books[this.Book]; ok {
+		book.Comment = this.Text
+	} else {
+		log.Error().Uint("id", this.Book).Msg("Invalid book id")
+	}
 }
 
 func (this Comment) StructScan(rows *sqlx.Rows) (TableRowData, error) {

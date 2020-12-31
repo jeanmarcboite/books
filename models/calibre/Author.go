@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type Author struct {
@@ -60,8 +61,23 @@ func GetBooksAuthorsLink(db *CalibreDB, database *sqlx.DB) error {
 			if err != nil {
 				return err
 			}
-			db.Authors[link.Author].Books = append(db.Authors[link.Author].Books, link.Book)
-			db.Books[link.Book].Authors = append(db.Books[link.Book].Authors, link.Author)
+
+			author, authorOK := db.Authors[link.Author]
+			book, bookOK := db.Books[link.Book]
+
+			if bookOK && authorOK {
+				author.Books = append(author.Books, link.Book)
+				book.Authors = append(book.Authors, link.Author)
+
+			} else {
+				if !authorOK {
+					log.Error().Uint("id", link.Author).Msg("Invalid author id")
+
+				}
+				if !bookOK {
+					log.Error().Uint("id", link.Book).Msg("Invalid book id")
+				}
+			}
 		}
 	}
 	return err

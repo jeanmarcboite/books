@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 func GetTags(db *CalibreDB, database *sqlx.DB) error {
@@ -21,14 +22,26 @@ func GetBooksTagsLink(db *CalibreDB, database *sqlx.DB, tags map[uint]string) er
 
 	if err == nil {
 		defer rows.Close()
-		var book uint
-		var tag uint
+		var bookID uint
+		var tagID uint
 		for rows.Next() {
-			err = rows.Scan(&book, &tag)
+			err = rows.Scan(&bookID, &tagID)
 			if err != nil {
 				return err
 			}
-			db.Books[book].Tags = append(db.Books[book].Tags, tags[tag])
+			tag, tagOK := tags[tagID]
+			book, bookOK := db.Books[bookID]
+			if tagOK && bookOK {
+				book.Tags = append(book.Tags, tag)
+			} else {
+				if !tagOK {
+					log.Error().Uint("id", tagID).Msg("Invalid tag id")
+
+				}
+				if !bookOK {
+					log.Error().Uint("id", bookID).Msg("Invalid book id")
+				}
+			}
 		}
 	}
 	return err

@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type dataRow struct {
@@ -32,12 +33,15 @@ func GetData(db *CalibreDB, database *sqlx.DB) error {
 		if err != nil {
 			return err
 		}
-
-		db.Books[dataRow.Book].Data =
-			Data{
-				Format:           dataRow.Format,
-				UncompressedSize: dataRow.Uncompressed_size,
-				Name:             dataRow.Name}
+		if book, ok := db.Books[dataRow.Book]; ok {
+			book.Data =
+				Data{
+					Format:           dataRow.Format,
+					UncompressedSize: dataRow.Uncompressed_size,
+					Name:             dataRow.Name}
+		} else {
+			log.Error().Uint("id", dataRow.Book).Msg("Invalid book id")
+		}
 	}
 
 	return rows.Err()

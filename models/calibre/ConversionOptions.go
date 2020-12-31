@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type ConversionOption struct {
@@ -18,15 +19,18 @@ func GetConversionOptions(db *CalibreDB, database *sqlx.DB) error {
 
 	defer rows.Close()
 	for rows.Next() {
-		var id, book uint
+		var id, bookID uint
 		var format string
 		var data []byte
-		err = rows.Scan(&id, &format, &book, &data)
+		err = rows.Scan(&id, &format, &bookID, &data)
 		if err != nil {
 			return err
 		}
-
-		db.Books[book].ConversionOption = ConversionOption{Format: format, Data: data}
+		if book, ok := db.Books[bookID]; ok {
+			book.ConversionOption = ConversionOption{Format: format, Data: data}
+		} else {
+			log.Error().Uint("id", bookID).Msg("Invalid book id")
+		}
 	}
 
 	return rows.Err()

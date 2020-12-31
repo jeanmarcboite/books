@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type NullString sql.NullString
@@ -77,13 +78,21 @@ func GetBooksNamesLink(
 }
 
 func GetPublishers(db *CalibreDB, database *sqlx.DB) error {
-	return GetNames(db, database, "publisher", "publishers", func(book uint, data *NameSort) {
-		db.Books[book].Publishers = append(db.Books[book].Publishers, data)
+	return GetNames(db, database, "publisher", "publishers", func(bookID uint, data *NameSort) {
+		if book, ok := db.Books[bookID]; ok {
+			book.Publishers = append(book.Publishers, data)
+		} else {
+			log.Error().Uint("id", bookID).Msg("Invalid book id")
+		}
 	})
 }
 
 func GetSeries(db *CalibreDB, database *sqlx.DB) error {
-	return GetNames(db, database, "series", "series", func(book uint, data *NameSort) {
-		db.Books[book].Series = append(db.Books[book].Series, data)
+	return GetNames(db, database, "series", "series", func(bookID uint, data *NameSort) {
+		if book, ok := db.Books[bookID]; ok {
+			book.Series = append(book.Series, data)
+		} else {
+			log.Error().Uint("id", bookID).Msg("Invalid book id")
+		}
 	})
 }

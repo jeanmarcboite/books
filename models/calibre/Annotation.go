@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type AnnotationRow struct {
@@ -42,18 +43,21 @@ func GetAnnotations(db *CalibreDB, database *sqlx.DB) error {
 		if err != nil {
 			return err
 		}
-
-		db.Books[annotationRow.book].Annotations = append(db.Books[annotationRow.book].Annotations,
-			Annotation{
-				Format:         annotationRow.format,
-				UserType:       annotationRow.user_type,
-				User:           annotationRow.user,
-				Timestamp:      annotationRow.timestamp,
-				AnnotID:        annotationRow.annot_id,
-				AnnotType:      annotationRow.annot_type,
-				AnnotData:      annotationRow.annot_data,
-				SearchableText: annotationRow.searchable_text,
-			})
+		if book, ok := db.Books[annotationRow.book]; ok {
+			book.Annotations = append(book.Annotations,
+				Annotation{
+					Format:         annotationRow.format,
+					UserType:       annotationRow.user_type,
+					User:           annotationRow.user,
+					Timestamp:      annotationRow.timestamp,
+					AnnotID:        annotationRow.annot_id,
+					AnnotType:      annotationRow.annot_type,
+					AnnotData:      annotationRow.annot_data,
+					SearchableText: annotationRow.searchable_text,
+				})
+		} else {
+			log.Error().Uint("id", annotationRow.book).Msg("Invalid book id")
+		}
 	}
 
 	return rows.Err()

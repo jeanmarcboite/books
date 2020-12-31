@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type LastReadPosition struct {
@@ -16,7 +17,11 @@ type LastReadPosition struct {
 }
 
 func (this LastReadPosition) Add(db *CalibreDB) {
-	db.Books[this.Book].LastReadPosition = this
+	if book, ok := db.Books[this.ID]; ok {
+		book.LastReadPosition = this
+	} else {
+		log.Error().Uint("id", this.ID).Msg("Invalid book id")
+	}
 }
 
 func (this LastReadPosition) StructScan(rows *sqlx.Rows) (TableRowData, error) {

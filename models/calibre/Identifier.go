@@ -2,6 +2,7 @@ package calibre
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog/log"
 )
 
 type Identifier struct {
@@ -18,16 +19,19 @@ func GetIdentifiers(db *CalibreDB, database *sqlx.DB) error {
 
 	defer rows.Close()
 
-	var book uint
+	var bookID uint
 	for rows.Next() {
 		var identifier Identifier
 
-		err = rows.Scan(&book, &identifier.Type, &identifier.Val)
+		err = rows.Scan(&bookID, &identifier.Type, &identifier.Val)
 		if err != nil {
 			return err
 		}
-
-		db.Books[book].Identifiers = append(db.Books[book].Identifiers, identifier)
+		if book, ok := db.Books[bookID]; ok {
+			book.Identifiers = append(book.Identifiers, identifier)
+		} else {
+			log.Error().Uint("id", bookID).Msg("Invalid book id")
+		}
 	}
 
 	return rows.Err()
