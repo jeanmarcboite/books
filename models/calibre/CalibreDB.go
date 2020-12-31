@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/zerolog/log"
 )
 
 type CalibreDB struct {
@@ -29,12 +30,14 @@ func (this CalibreDB) String() string {
 }
 
 func ReadDB(filename string, debug bool) (CalibreDB, error) {
+	log.Debug().Str("filename", filename).Msg("ReadDB")
 	db := CalibreDB{Filename: filename}
 	var err error = nil
 
 	sqlDB, err := sql.Open("sqlite3", filename)
 
 	if err == nil {
+		log.Debug().Str("db", filename).Msg("open database")
 		database := sqlx.NewDb(sqlDB, "sqlite3")
 		defer database.Close()
 		err = database.Ping()
@@ -46,15 +49,18 @@ func ReadDB(filename string, debug bool) (CalibreDB, error) {
 				if err != nil {
 					return db, fmt.Errorf("scanning library_id: %s", err.Error())
 				}
+				log.Debug().Str("db", filename).Str("uuid", db.ID).Msg("open database")
 			}
 
 			err = rows.Err()
 		}
 
 		if err == nil {
+			log.Debug().Str("db", filename).Str("uuid", db.ID).Msg("read books")
 			err = db.ReadBooks(database)
 		}
 		if err == nil {
+			log.Debug().Str("db", filename).Str("uuid", db.ID).Msg("get custom columns")
 			err = GetCustomColumns(&db, database)
 		}
 	}
